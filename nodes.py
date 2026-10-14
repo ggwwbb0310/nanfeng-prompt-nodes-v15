@@ -1,3 +1,85 @@
+"""南风提示词节点（V15 隔离注册）。"""
+
+from __future__ import annotations
+
+import re
+from typing import Dict, List, Tuple
+
+CATEGORY = "南风节点/提示词"
+
+def _clean(value): return str(value or "").strip()
+    def _present(value): return value is not None
+        
+def _replace_mentions(text: str, mapping: Dict[str, str]) -> str:
+        result = str(text or "")
+        for source in sorted(mapping, key=len, reverse=True): result = result.replace(source, mapping[source])
+                return result.strip()
+
+def build_connected_mapping(images, videos, audios) -> Tuple[Dict[str, str], str]:
+        mapping, lines = {}, []
+    for kind, values, tag_name in (("图片", images, "Picture"), ("视频", videos, "Video"), ("音频", audios, "Audio")):
+                index = 1
+                for slot, value in enumerate(values, 1):
+                                alias = f"@{kind}{slot}"
+                                if _present(value):
+                                                    tag = f"<{tag_name} {index}>"; mapping[alias] = tag; lines.append(f"{alias}（{kind}输入{slot}） -> {tag}"); index += 1
+                                        return mapping, "\n".join(lines) if lines else "未连接参考素材。"
+                    
+        def _unknown_mentions(text, mapping):
+                found = set(re.findall(r"@(图片|视频|音频)(\d+)", str(text or "")))
+                return sorted({f"@{kind}{number}" for kind, number in found} - set(mapping))
+            
+def _subject_definitions(mapping):
+        lines=[]; subject_index=1
+    for alias, tag in mapping.items():
+                if alias.startswith("@图片"): lines.append(f"<Subject {subject_index}>是{tag}，按用户正文指定的职责使用该参考图片。\n"); subject_index += 1
+                elif alias.startswith("@视频"): lines.append(f"{tag}只按用户正文指定的动作、运镜或时序职责提供参考，不覆盖人物身份。")
+                elif alias.startswith("@音频"): lines.append(f"{tag}只按用户正文指定的音色、环境声或节奏职责提供参考。")
+                        return "\n".join(lines) if lines else "不使用外部参考素材。"
+
+def format_h3_prompt(user_text, mapping, mode, duration, aspect_ratio, no_prompt_reading, no_text_watermark):
+        body = _replace_mentions(_clean(user_text), mapping) or "请在这里填写画面、动作、镜头、声音和参考素材职责。"
+    constraints=[]
+    if no_prompt_reading: constraints.append("全片没有额外对白、旁白、画外音或歌唱；所有人物保持安静。")
+            if no_text_watermark: constraints.append("画面不要额外字幕、文字、水印或Logo。")
+                    detail=body + (("\n"+"\n".join(constraints)) if constraints else ""); duration=max(1.0,float(duration)); prefix=""
+                        if mode=="首帧图生视频": prefix="目标视频在0.00秒处完整参考<Picture 1>，该图片对应[Shot 1]的实际首帧。\n\n"
+                        elif mode=="首尾帧": prefix=f"参考图片与目标视频的对齐关系：<Picture 1>对应[Shot 1]的0.00秒；<Picture 2>对应最后镜头的{duration:.2f}秒。\n\n"
+                        elif mode=="仅尾帧": prefix=f"<Picture 1>对应目标视频最后镜头的{duration:.2f}秒，并作为实际尾帧。\n\n"
+                                if mode=="全能参考": return f"subject_definitions:\n{_subject_definitions(mapping)}\n\nsummary:\n[全能参考生成] 生成{duration:g}秒、{aspect_ratio}视频。\n\ndetailed_description:\n[Shot 1] 00:00.000，{detail}\n\noverall_soundscape:\nN/A\n\nnon_diegetic_music:\nN/A"
+                                        return f"{prefix}integrated_multimodal_description:\n[Shot 1] 00:00.000，{detail}\n\noverall_soundscape:\nN/A\n\nnon_diegetic_music:\nN/A"
+
+class NanFengH3PromptDraft:
+        @classmethod
+    def INPUT_TYPES(cls):
+                return {"required":{"提示词":("STRING",{"multiline":True,"dynamicPrompts":False,"default":"@图片1 中的人物在室内缓慢转头看向镜头，保持人物外观一致。"}),"插入引用":(["@图片1","@图片2","@图片3","@视频1","@视频2","@视频3","@音频1","@音频2","@音频3"],{"default":"@图片1"}),"模式":(["全能参考","文生视频","首帧图生视频","首尾帧","仅尾帧"],{"default":"全能参考"}),"时长秒":("FLOAT",{"default":5.0,"min":1.0,"max":60.0,"step":0.1}),"画幅":(["16:9","9:16","1:1","21:9","4:3","3:4"],{"default":"16:9"}),"无对白防朗读":("BOOLEAN",{"default":True}),"不要字幕水印Logo":("BOOLEAN",{"default":True})},"optional":{"图片1":("IMAGE",),"图片2":("IMAGE",),"图片3":("IMAGE",),"视频1":("IMAGE",),"视频2":("IMAGE",),"视频3":("IMAGE",),"音频1":("AUDIO",),"音频2":("AUDIO",),"音频3":("AUDIO",)}}
+    RETURN_TYPES=("STRING",); RETURN_NAMES=("提示词",); FUNCTION="build"; CATEGORY=CATEGORY
+    def build(self,提示词,插入引用,模式,时长秒,画幅,无对白防朗读=True,不要字幕水印Logo=True,图片1=None,图片2=None,图片3=None,视频1=None,视频2=None,视频3=None,音频1=None,音频2=None,音频3=None):
+                mapping,_=build_connected_mapping((图片1,图片2,图片3),(视频1,视频2,视频3),(音频1,音频2,音频3)); unknown=_unknown_mentions(提示词,mapping)
+        if unknown: raise ValueError("以下@引用没有连接对应素材："+"、".join(unknown))
+                    return (format_h3_prompt(提示词,mapping,模式,时长秒,画幅,bool(无对白防朗读),bool(不要字幕水印Logo)),)
+
+class NanFengH3ReferenceNumbering:
+        @classmethod
+    def INPUT_TYPES(cls): return {"required":{"文本":("STRING",{"multiline":True,"default":"@图片1 @视频1 @音频1"})}}
+            RETURN_TYPES=("STRING",); RETURN_NAMES=("文本",); FUNCTION="passthrough"; CATEGORY=CATEGORY
+    def passthrough(self,文本): return (str(文本),)
+        
+class NanFengPromptList:
+        MAX_PROMPTS=20
+    @classmethod
+    def INPUT_TYPES(cls):
+                required={"提示词框数量":("INT",{"default":3,"min":1,"max":cls.MAX_PROMPTS,"step":1}),"统一前缀":("STRING",{"multiline":True,"dynamicPrompts":False,"default":""}),"统一后缀":("STRING",{"multiline":True,"dynamicPrompts":False,"default":""})}
+        for index in range(1,cls.MAX_PROMPTS+1): required[f"提示词{index}"]=("STRING",{"multiline":True,"dynamicPrompts":False,"default":""})
+                    return {"required":required}
+    RETURN_TYPES=("STRING","STRING"); RETURN_NAMES=("提示词","原始提示词"); OUTPUT_IS_LIST=(True,True); FUNCTION="build_list"; CATEGORY=CATEGORY
+    def build_list(self,提示词框数量,统一前缀="",统一后缀="",**kwargs):
+                count=max(1,min(int(提示词框数量),self.MAX_PROMPTS)); bodies=[str(kwargs.get(f"提示词{index}","")).strip() for index in range(1,count+1)]; bodies=[body for body in bodies if body]
+        if not bodies: raise ValueError("南风提示词列表：请至少填写一个可见提示词框。")
+                    return ([f"{str(统一前缀 or '')}{body}{str(统一后缀 or '')}" for body in bodies],bodies)
+
+NODE_CLASS_MAPPINGS={"NanFengH3PromptDraftV15":NanFengH3PromptDraft,"NanFengH3ReferenceNumberingV15":NanFengH3ReferenceNumbering,"NanFengPromptListV15":NanFengPromptList}
+NODE_DISPLAY_NAME_MAPPINGS={"NanFengH3PromptDraftV15":"南风V15提示词","NanFengH3ReferenceNumberingV15":"南风V15 @引用文本","NanFengPromptListV15":"南风V15提示词列表"}
 """南风提示词：本地 MiniMax H3 中文提示词与 @ 素材引用节点。"""
 
 from __future__ import annotations
