@@ -1,0 +1,8 @@
+﻿.env
+.audio-drive.env
+.vision-analysis-cache.json
+__pycache__/
+*.pyc
+*.bak*
+*.backup-*
+api-fix.diff

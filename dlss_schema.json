@@ -1,0 +1,426 @@
+{
+  "image": {
+    "required": {
+      "image": [
+        "IMAGE",
+        {}
+      ],
+      "upscale_mode": [
+        "COMBO",
+        {
+          "default": "1.5× (Quality)",
+          "multiselect": false,
+          "options": [
+            "1× (DLAA / native)",
+            "1.5× (Quality)",
+            "1.724× (Balanced)",
+            "2× (Performance)",
+            "3× (Ultra Performance)"
+          ]
+        }
+      ],
+      "require_neural_upscaling": [
+        "BOOLEAN",
+        {
+          "tooltip": "Fail instead of returning a larger fallback result when NVIDIA reports neural upscaling inactive.",
+          "default": false
+        }
+      ],
+      "nr_preset": [
+        "COMBO",
+        {
+          "default": "Default",
+          "multiselect": false,
+          "options": [
+            "Default",
+            "Preset #1",
+            "Preset #2",
+            "Preset #3"
+          ]
+        }
+      ],
+      "nr_style": [
+        "COMBO",
+        {
+          "default": "Default",
+          "multiselect": false,
+          "options": [
+            "Default",
+            "Natural",
+            "Cinematic"
+          ]
+        }
+      ],
+      "nr_intensity": [
+        "FLOAT",
+        {
+          "default": 1.0,
+          "min": 0.0,
+          "max": 2.0,
+          "step": 0.05
+        }
+      ],
+      "local_tone_strength": [
+        "FLOAT",
+        {
+          "default": 1.0,
+          "min": 0.0,
+          "max": 2.0,
+          "step": 0.05
+        }
+      ],
+      "local_structure_strength": [
+        "FLOAT",
+        {
+          "default": 1.0,
+          "min": 0.0,
+          "max": 2.0,
+          "step": 0.05
+        }
+      ],
+      "skin_structure_strength": [
+        "FLOAT",
+        {
+          "default": -1.0,
+          "min": -1.0,
+          "max": 2.0,
+          "step": 0.05
+        }
+      ],
+      "automatic_mask": [
+        "BOOLEAN",
+        {
+          "default": false
+        }
+      ],
+      "dlss_model_preset": [
+        "COMBO",
+        {
+          "default": "Default",
+          "multiselect": false,
+          "options": [
+            "Default",
+            "J",
+            "K",
+            "L",
+            "M"
+          ]
+        }
+      ]
+    },
+    "optional": {
+      "output_detail_strength": [
+        "FLOAT",
+        {
+          "tooltip": "SDR output composition: 1 preserves worker output; 2 amplifies brightness changes. Separate from NR intensity.",
+          "default": 1.0,
+          "min": 1.0,
+          "max": 2.0,
+          "step": 0.05
+        }
+      ]
+    }
+  },
+  "video": {
+    "required": {
+      "video": [
+        "VIDEO",
+        {}
+      ],
+      "upscale_mode": [
+        "COMBO",
+        {
+          "default": "1.5× (Quality)",
+          "multiselect": false,
+          "options": [
+            "1× (DLAA / native)",
+            "1.5× (Quality)",
+            "1.724× (Balanced)",
+            "2× (Performance)",
+            "3× (Ultra Performance)"
+          ]
+        }
+      ],
+      "require_neural_upscaling": [
+        "BOOLEAN",
+        {
+          "tooltip": "Fail instead of returning a larger fallback result when NVIDIA reports neural upscaling inactive.",
+          "default": false
+        }
+      ],
+      "nr_preset": [
+        "COMBO",
+        {
+          "default": "Default",
+          "multiselect": false,
+          "options": [
+            "Default",
+            "Preset #1",
+            "Preset #2",
+            "Preset #3"
+          ]
+        }
+      ],
+      "nr_style": [
+        "COMBO",
+        {
+          "default": "Default",
+          "multiselect": false,
+          "options": [
+            "Default",
+            "Natural",
+            "Cinematic"
+          ]
+        }
+      ],
+      "nr_intensity": [
+        "FLOAT",
+        {
+          "default": 1.0,
+          "min": 0.0,
+          "max": 2.0,
+          "step": 0.05
+        }
+      ],
+      "local_tone_strength": [
+        "FLOAT",
+        {
+          "default": 1.0,
+          "min": 0.0,
+          "max": 2.0,
+          "step": 0.05
+        }
+      ],
+      "local_structure_strength": [
+        "FLOAT",
+        {
+          "default": 1.0,
+          "min": 0.0,
+          "max": 2.0,
+          "step": 0.05
+        }
+      ],
+      "skin_structure_strength": [
+        "FLOAT",
+        {
+          "default": -1.0,
+          "min": -1.0,
+          "max": 2.0,
+          "step": 0.05
+        }
+      ],
+      "automatic_mask": [
+        "BOOLEAN",
+        {
+          "default": false
+        }
+      ],
+      "dlss_model_preset": [
+        "COMBO",
+        {
+          "default": "Default",
+          "multiselect": false,
+          "options": [
+            "Default",
+            "J",
+            "K",
+            "L",
+            "M"
+          ]
+        }
+      ],
+      "encoding_quality": [
+        "COMBO",
+        {
+          "default": "Max",
+          "multiselect": false,
+          "options": [
+            "Auto (Default)",
+            "Max",
+            "Best",
+            "Good"
+          ]
+        }
+      ],
+      "video_codec": [
+        "COMBO",
+        {
+          "default": "H.264",
+          "multiselect": false,
+          "options": [
+            "H.264",
+            "H.264 (NVIDIA NVENC)",
+            "H.265",
+            "H.265 (NVIDIA NVENC)",
+            "AV1",
+            "AV1 (NVIDIA NVENC)",
+            "ProRes Proxy"
+          ]
+        }
+      ],
+      "container": [
+        "COMBO",
+        {
+          "default": "MP4",
+          "multiselect": false,
+          "options": [
+            "MP4",
+            "MKV",
+            "MOV"
+          ]
+        }
+      ],
+      "rename": [
+        "COMBO",
+        {
+          "tooltip": "Controls only the temporary filename.",
+          "default": "Auto",
+          "multiselect": false,
+          "options": [
+            "Auto",
+            "Copy",
+            "Custom"
+          ]
+        }
+      ],
+      "custom_suffix": [
+        "STRING",
+        {
+          "default": "_DLSS5",
+          "multiline": false
+        }
+      ],
+      "hdr_mode": [
+        "BOOLEAN",
+        {
+          "tooltip": "10-bit output with input colorspace metadata. Supported by H.265, AV1, and ProRes only.",
+          "default": false
+        }
+      ]
+    },
+    "optional": {
+      "output_detail_strength": [
+        "FLOAT",
+        {
+          "tooltip": "SDR output composition: 1 preserves worker output; 2 amplifies brightness changes. Separate from NR intensity.",
+          "default": 1.0,
+          "min": 1.0,
+          "max": 2.0,
+          "step": 0.05
+        }
+      ]
+    }
+  },
+  "fg": {
+    "required": {
+      "video": [
+        "VIDEO",
+        {
+          "tooltip": "Video to interpolate."
+        }
+      ],
+      "output_fps": [
+        "COMBO",
+        {
+          "tooltip": "Fractional choices use exact 1001-based rates.",
+          "default": "60",
+          "multiselect": false,
+          "options": [
+            "23.976",
+            "25",
+            "29.97",
+            "30",
+            "50",
+            "59.94",
+            "60",
+            "90",
+            "120"
+          ]
+        }
+      ],
+      "dlss_engine": [
+        "COMBO",
+        {
+          "tooltip": "Auto uses an exact native grid when supported, then cascades when required.",
+          "default": "Auto",
+          "multiselect": false,
+          "options": [
+            "Auto",
+            "Native DLSSG",
+            "Cascade"
+          ]
+        }
+      ],
+      "encoding_quality": [
+        "COMBO",
+        {
+          "default": "Max",
+          "multiselect": false,
+          "options": [
+            "Auto (Default)",
+            "Max",
+            "Best",
+            "Good"
+          ]
+        }
+      ],
+      "video_codec": [
+        "COMBO",
+        {
+          "tooltip": "Plain codecs use CPU encoding; NVIDIA NVENC choices use the GPU.",
+          "default": "H.264",
+          "multiselect": false,
+          "options": [
+            "H.264",
+            "H.264 (NVIDIA NVENC)",
+            "H.265",
+            "H.265 (NVIDIA NVENC)",
+            "AV1",
+            "AV1 (NVIDIA NVENC)",
+            "ProRes Proxy"
+          ]
+        }
+      ],
+      "container": [
+        "COMBO",
+        {
+          "default": "MP4",
+          "multiselect": false,
+          "options": [
+            "MP4",
+            "MKV",
+            "MOV"
+          ]
+        }
+      ],
+      "rename": [
+        "COMBO",
+        {
+          "tooltip": "Controls the temporary VIDEO filename only. ComfyUI's Save Video node owns the final name.",
+          "default": "Auto",
+          "multiselect": false,
+          "options": [
+            "Auto",
+            "Copy",
+            "Custom"
+          ]
+        }
+      ],
+      "custom_suffix": [
+        "STRING",
+        {
+          "tooltip": "Used for the temporary filename only when Rename is Custom.",
+          "default": "_DLSSFG",
+          "multiline": false
+        }
+      ],
+      "hdr_mode": [
+        "BOOLEAN",
+        {
+          "tooltip": "10-bit output with input colorspace metadata. Supported by H.265, AV1, and ProRes only.",
+          "default": false
+        }
+      ]
+    }
+  }
+}
