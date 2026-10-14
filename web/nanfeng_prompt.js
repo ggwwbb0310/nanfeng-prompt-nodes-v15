@@ -100,7 +100,7 @@ function makePopup(node, widget) {
 app.registerExtension({
   name: "NanFeng.PromptMentions.V15",
   async beforeRegisterNodeDef(nodeType, nodeData) {
-    if (nodeData?.name !== "NanFengH3PromptDraft") return;
+    if (nodeData?.name !== "NanFengH3PromptDraftV15") return;
     const original = nodeType.prototype.onNodeCreated;
     nodeType.prototype.onNodeCreated = function () {
       const result = original?.apply(this, arguments);

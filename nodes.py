@@ -275,13 +275,13 @@ class NanFengPromptList:
 
 
 NODE_CLASS_MAPPINGS = {
-    "NanFengH3PromptDraft": NanFengH3PromptDraft,
-    "NanFengH3ReferenceNumbering": NanFengH3ReferenceNumbering,
-    "NanFengPromptList": NanFengPromptList,
+    "NanFengH3PromptDraftV15": NanFengH3PromptDraft,
+    "NanFengH3ReferenceNumberingV15": NanFengH3ReferenceNumbering,
+    "NanFengPromptListV15": NanFengPromptList,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "NanFengH3PromptDraft": "南风提示词",
-    "NanFengH3ReferenceNumbering": "南风@引用文本",
-    "NanFengPromptList": "南风提示词列表",
+    "NanFengH3PromptDraftV15": "南风V15提示词",
+    "NanFengH3ReferenceNumberingV15": "南风V15 @引用文本",
+    "NanFengPromptListV15": "南风V15提示词列表",
 }
